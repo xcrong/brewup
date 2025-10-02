@@ -36,7 +36,9 @@ brew install brewup
 
 *Note: The Homebrew tap will be available at `xcrong/brewup` once set up.*
 
-### From Source (Recommended)
+**Why Homebrew is recommended:** Homebrew automatically handles macOS security verification, avoiding Gatekeeper warnings that can occur with manually downloaded binaries.
+
+### From Source (Alternative)
 
 1. Ensure you have Rust 1.70+ installed. If not, install it from [rustup.rs](https://rustup.rs/)
 
@@ -60,6 +62,15 @@ make quick-install
 
 - macOS with Homebrew installed
 - **Rust 1.70+** (for building from source)
+
+## 🔒 macOS Security Notes
+
+If you download binaries directly from GitHub releases, you may encounter macOS security warnings. See [MACOS_SECURITY.md](MACOS_SECURITY.md) for solutions.
+
+**Recommended approaches:**
+- Use Homebrew installation (handles security automatically)
+- Build from source using Cargo
+- Use the provided security scripts if downloading binaries
 
 ## 📖 Usage
 
