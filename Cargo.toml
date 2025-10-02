@@ -1,0 +1,19 @@
+[package]
+name = "brewup"
+version = "0.1.0"
+edition = "2021"
+authors = ["xcrong <hi@xcrong.me>"]
+license = "MIT"
+description = "🍺 CLI tool to automate Homebrew package management"
+repository = "https://github.com/xcrong/brewup"
+
+[dependencies]
+colored = "2.0"
+clap = { version = "4.0", features = ["derive"] }
+
+[profile.release]
+opt-level = "z"
+strip = true
+lto = true
+codegen-units = 1
+panic = "abort"
