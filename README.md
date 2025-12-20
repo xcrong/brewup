@@ -2,13 +2,12 @@
 
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Homebrew](https://img.shields.io/badge/Homebrew-compatible-green.svg)](https://brew.sh)
 
 A high-quality, modular command-line tool to automate Homebrew package management with detailed output and comprehensive error handling.
 
 
 
-[![Homebrew](https://img.shields.io/badge/Installable%20via-Homebrew-orange.svg)](https://brew.sh)
+
 
 ## ✨ Features
 
@@ -27,17 +26,6 @@ A high-quality, modular command-line tool to automate Homebrew package managemen
 
 ## 🚀 Installation
 
-### Homebrew (Recommended)
-```bash
-# Install via Homebrew tap
-brew tap xcrong/brewup
-brew install brewup
-```
-
-*Note: The Homebrew tap will be available at `xcrong/brewup` once set up.*
-
-**Why Homebrew is recommended:** Homebrew automatically handles macOS security verification, avoiding Gatekeeper warnings that can occur with manually downloaded binaries.
-
 ### From Source (Alternative)
 
 1. Ensure you have Rust 1.70+ installed. If not, install it from [rustup.rs](https://rustup.rs/)
@@ -50,25 +38,7 @@ brew install brewup
    ```
 
 
-
-### Quick Install
-
-```bash
-# Run the interactive install script
-make quick-install
-```
-
-### Prerequisites
-
-- macOS with Homebrew installed
-- **Rust 1.70+** (for building from source)
-
-## 🔒 macOS Security Notes
-
-If you download binaries directly from GitHub releases, you may encounter macOS security warnings. See [MACOS_SECURITY.md](MACOS_SECURITY.md) for solutions.
-
 **Recommended approaches:**
-- Use Homebrew installation (handles security automatically)
 - Build from source using Cargo
 - Use the provided security scripts if downloading binaries
 
@@ -196,37 +166,6 @@ BrewUp executes the following operations sequentially:
 3. **Cleans Up** - Executes `brew cleanup --prune=all` to remove old versions and cache
 4. **Shows Summary** - Displays installed packages and their versions
 
-## 📋 Sample Output
-
-```bash
-🍺 BrewUp - Homebrew Package Updater
-========================================
-
-📥 Updating Homebrew...
-   Running: brew update
-   ✓ Done
-
-⬆️ Upgrading packages...
-   Running: brew upgrade
-   ✓ Done
-
-🧹 Cleaning up cache and old versions...
-   Running: brew cleanup --prune=all
-Removing: /Users/user/Library/Caches/Homebrew/package... (1.2MB)
-==> This operation has freed approximately 1.2MB of disk space.
-
-📊 Getting package summary...
-   📦 42 packages installed
-
-Installed packages:
-   package1 1.0.0
-   package2 2.1.3
-   package3 0.5.2
-   ... (and 39 more...)
-
-✅ BrewUp completed successfully!
-Your Homebrew installation is now up to date.
-```
 
 ## 🛡️ Error Handling
 
@@ -346,7 +285,7 @@ Interactive automation setup that provides:
 - Verify installation directory permissions
 
 **Homebrew missing**
-- Install Homebrew: `/bin/bash -
+- Install Homebrew: `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
 
 **Cleanup warnings**
 - Cleanup warnings are usually not critical and the tool will continue
@@ -358,13 +297,3 @@ When running automated updates, check the logs:
 tail -f ~/.local/log/brewup.log
 ```
 
-## Changelog
-
-### v0.1.0
-- Initial release
-- Basic upgrade and cleanup functionality
-- Colored output with emojis
-- Command line options support
-- Dry-run mode
-- Example scripts for automation
-- Comprehensive error handling

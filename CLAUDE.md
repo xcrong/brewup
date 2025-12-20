@@ -19,7 +19,6 @@ BrewUp is a Rust CLI tool that automates Homebrew package management by upgradin
 
 ### Installation and Usage
 - `make install` - Build and install to ~/.local/bin
-- `make quick-install` - Run interactive install script
 - `make run` - Run brewup directly
 - `make dry-run` - Test with dry-run flag
 - `make verbose` - Test with verbose flag
