@@ -31,8 +31,8 @@ pub fn is_brew_available() -> bool {
 /// * `verbose` - Whether to show verbose output
 ///
 /// # Returns
-/// `Ok(())` if the command succeeds, `Err(String)` with error message on failure
-pub fn run_brew_command(args: &[&str], verbose: bool) -> Result<(), String> {
+/// `Ok(String)` with command output if the command succeeds, `Err(String)` with error message on failure
+pub fn run_brew_command(args: &[&str], verbose: bool) -> Result<String, String> {
     if verbose {
         println!(
             "{} brew {}",
@@ -49,8 +49,7 @@ pub fn run_brew_command(args: &[&str], verbose: bool) -> Result<(), String> {
         .map_err(|e| format!("Failed to execute command: {}", e))?;
 
     if output.status.success() {
-        handle_command_success(&output, verbose);
-        Ok(())
+        handle_command_success(&output, verbose)
     } else {
         handle_command_failure(&output)
     }
@@ -61,14 +60,18 @@ pub fn run_brew_command(args: &[&str], verbose: bool) -> Result<(), String> {
 /// # Arguments
 /// * `output` - The command output
 /// * `verbose` - Whether to show verbose output
-fn handle_command_success(output: &Output, _verbose: bool) {
-    let stdout = String::from_utf8_lossy(&output.stdout);
+///
+/// # Returns
+/// `Ok(String)` with command output
+fn handle_command_success(output: &Output, _verbose: bool) -> Result<String, String> {
+    let stdout = String::from_utf8_lossy(&output.stdout).to_string();
     if !stdout.trim().is_empty() {
         println!("{}", stdout);
     } else {
         // Show a simple progress indicator for silent operations
         println!("{}", "   ✓ Done".green());
     }
+    Ok(stdout)
 }
 
 /// Handles failed command execution.
@@ -78,7 +81,7 @@ fn handle_command_success(output: &Output, _verbose: bool) {
 ///
 /// # Returns
 /// `Err(String)` with the formatted error message
-fn handle_command_failure(output: &Output) -> Result<(), String> {
+fn handle_command_failure(output: &Output) -> Result<String, String> {
     let stderr = String::from_utf8_lossy(&output.stderr);
     Err(stderr.to_string())
 }
