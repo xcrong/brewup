@@ -26,6 +26,20 @@ A high-quality, modular command-line tool to automate Homebrew package managemen
 
 ## 🚀 Installation
 
+### Quick Install (Recommended)
+
+Install BrewUp using our installation script:
+
+```bash
+curl -sSL https://raw.githubusercontent.com/xcrong/brewup/main/install.sh | sh
+```
+
+Or using wget:
+
+```bash
+wget -qO- https://raw.githubusercontent.com/xcrong/brewup/main/install.sh | sh
+```
+
 ### From Source (Alternative)
 
 1. Ensure you have Rust 1.70+ installed. If not, install it from [rustup.rs](https://rustup.rs/)
@@ -37,10 +51,16 @@ A high-quality, modular command-line tool to automate Homebrew package managemen
    make install
    ```
 
+### macOS Security Notes
 
-**Recommended approaches:**
-- Build from source using Cargo
-- Use the provided security scripts if downloading binaries
+When installing on macOS, you may encounter security warnings because the binary is not signed with an Apple Developer certificate. This is expected for open-source projects.
+
+**Quick fix for macOS security issues:**
+```bash
+curl -sSL https://raw.githubusercontent.com/xcrong/brewup/main/scripts/fix-macos-security.sh | sh
+```
+
+For detailed installation instructions and troubleshooting, see [INSTALL.md](INSTALL.md).
 
 ## 📖 Usage
 
