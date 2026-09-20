@@ -9,7 +9,7 @@ use std::process::Command;
 
 use crate::{
     cli::CliArgs,
-    config::{constants, Config},
+    config::{Config, constants},
     utils,
 };
 
@@ -250,16 +250,16 @@ fn parse_cleanup_output(output: String, stats: &mut ChangeStats) {
             if line.starts_with("==> Removing:") {
                 item_count += 1;
                 // Extract size from line like "==> Removing: /path/to/file (123.4 MB)"
-                if let Some(size_start) = line.find('(') {
-                    if let Some(size_end) = line.find(')') {
-                        let size_str = &line[size_start + 1..size_end];
-                        let size_parts: Vec<&str> = size_str.split_whitespace().collect();
-                        if size_parts.len() == 2 {
-                            if let Ok(size) = size_parts[0].parse::<f64>() {
-                                total_size += size;
-                                unit = size_parts[1];
-                            }
-                        }
+                if let Some(size_start) = line.find('(')
+                    && let Some(size_end) = line.find(')')
+                {
+                    let size_str = &line[size_start + 1..size_end];
+                    let size_parts: Vec<&str> = size_str.split_whitespace().collect();
+                    if size_parts.len() == 2
+                        && let Ok(size) = size_parts[0].parse::<f64>()
+                    {
+                        total_size += size;
+                        unit = size_parts[1];
                     }
                 }
             }
@@ -365,8 +365,7 @@ fn show_completion_message(_config: &Config, stats: &ChangeStats) {
 
     // Show updated packages count
     println!(
-        "   {} Updated {} packages",
-        "✅",
+        "   ✅ Updated {} packages",
         stats.updated_packages.to_string().bold()
     );
 
