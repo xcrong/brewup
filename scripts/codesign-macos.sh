@@ -45,7 +45,7 @@ BINARY_PATH="$1"
 if [[ -z "$BINARY_PATH" ]]; then
     print_info "Usage: $0 <path-to-brewup-binary>"
     print_info "Example: $0 brewup"
-    print_info "Example: $0 target/release/brewup"
+    print_info "Example: $0 zig-out/bin/brewup"
     echo ""
     print_info "Available options:"
     print_info "  --help          Show this help message"
@@ -76,8 +76,8 @@ if [[ "$BINARY_PATH" == "--remove-xattr" ]]; then
     # Try to find the binary
     if [[ -f "brewup" ]]; then
         BINARY_PATH="brewup"
-    elif [[ -f "target/release/brewup" ]]; then
-        BINARY_PATH="target/release/brewup"
+    elif [[ -f "zig-out/bin/brewup" ]]; then
+        BINARY_PATH="zig-out/bin/brewup"
     elif command -v brewup &> /dev/null; then
         BINARY_PATH=$(which brewup)
     else

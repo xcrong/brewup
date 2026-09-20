@@ -1,6 +1,6 @@
 # BrewUp 🍺
 
-[![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org)
+[![Zig](https://img.shields.io/badge/zig-0.16.0-orange.svg)](https://ziglang.org)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 A high-quality, modular command-line tool to automate Homebrew package management with detailed output and comprehensive error handling.
@@ -19,7 +19,7 @@ A high-quality, modular command-line tool to automate Homebrew package managemen
 - 📊 **Package summary** - Shows installed packages and their versions
 - 🏗️ **Modular architecture** - Well-structured, maintainable codebase
 - 🧪 **Comprehensive testing** - Unit tests and integration tests
-- 📚 **Full documentation** - Rustdoc comments and usage examples
+- 📚 **Full documentation** - Doc comments and usage examples
 - 🛡️ **Robust error handling** - Graceful failure handling with clear error messages
 
 
@@ -42,7 +42,7 @@ wget -qO- https://raw.githubusercontent.com/xcrong/brewup/main/install.sh | sh
 
 ### From Source (Alternative)
 
-1. Ensure you have Rust 1.70+ installed. If not, install it from [rustup.rs](https://rustup.rs/)
+1. Ensure you have Zig 0.16.0+ installed. If not, install it from [ziglang.org](https://ziglang.org/download/)
 
 2. Clone and build:
    ```bash
@@ -120,12 +120,12 @@ BrewUp is built with a modular, maintainable architecture:
 
 ```
 src/
-├── main.rs          # Application entry point and CLI handling
-├── lib.rs           # Library crate declarations
-├── cli.rs           # Command-line interface configuration
-├── commands.rs      # Core application logic and workflow
-├── config.rs        # Configuration management and constants
-└── utils.rs         # Utility functions and helpers
+├── main.zig         # Application entry point and CLI handling
+├── cli.zig          # Command-line interface (hand-rolled parsing)
+├── commands.zig     # Core application logic and workflow
+├── config.zig       # Configuration management and constants
+├── utils.zig        # Utility functions and helpers
+└── tests.zig        # Test aggregator root
 ```
 
 ### Key Design Principles
@@ -133,7 +133,7 @@ src/
 - **Separation of Concerns**: Each module has a single responsibility
 - **Error Handling**: Comprehensive error handling with clear messages
 - **Testability**: Modular design enables easy unit testing
-- **Documentation**: Complete Rustdoc comments throughout
+- **Documentation**: Complete doc comments throughout
 - **Configuration**: Centralized configuration management
 
 ## 🔧 Advanced Usage
@@ -203,7 +203,7 @@ BrewUp executes the following operations sequentially:
 # Build release version
 make build
 
-# Development workflow (format, lint, test, build)
+# Development workflow (format, test, build)
 make dev
 
 # Run tests
@@ -211,9 +211,6 @@ make test
 
 # Format code
 make fmt
-
-# Run clippy lints
-make clippy
 ```
 
 
@@ -226,14 +223,11 @@ make clippy
 # Run directly
 make run
 
-# Test with dry-run
+# Test with dry-run (safe, no system changes)
 make dry-run
 
-# Test with verbose output
-make verbose
-
-# Test with both flags
-make dry-verbose
+# Or pass flags through
+zig build run -- --dry-run --skip-cleanup
 ```
 
 
@@ -251,11 +245,11 @@ We welcome contributions! Please follow these steps:
 
 ### Development Guidelines
 
-- Follow Rust best practices and style guidelines
+- Follow Zig style guidelines (`zig fmt` must be clean)
 - Add comprehensive documentation for new features
-- Include unit tests for new functionality
+- Include unit tests for new functionality (`src/tests.zig` aggregates all modules)
 - Update the README.md if needed
-- Ensure all tests pass before submitting
+- Ensure all tests pass before submitting (`make dev`)
 
 ## 📄 License
 

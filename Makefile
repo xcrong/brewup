@@ -1,4 +1,4 @@
-.PHONY: build install clean test fmt lint dev help
+.PHONY: build install clean test fmt dev run dry-run help
 
 # Default target
 all: build
@@ -6,14 +6,14 @@ all: build
 # Build release binary
 build:
 	@echo "🔨 Building brewup..."
-	cargo build --release
+	zig build -Doptimize=ReleaseSmall
 	@echo "✅ Build completed"
 
 # Install to ~/.local/bin
 install: build
 	@echo "📦 Installing brewup..."
 	@mkdir -p ~/.local/bin
-	@cp target/release/brewup ~/.local/bin/
+	@cp zig-out/bin/brewup ~/.local/bin/
 	@chmod +x ~/.local/bin/brewup
 	@echo "✅ brewup installed to ~/.local/bin/brewup"
 	@echo ""
@@ -22,23 +22,27 @@ install: build
 
 # Clean build artifacts
 clean:
-	cargo clean
+	rm -rf zig-out .zig-cache
 
 # Run tests
 test:
-	cargo test
+	zig build test
 
 # Format code
 fmt:
-	cargo fmt
-
-# Run lints
-lint:
-	cargo clippy -- -D warnings
+	zig fmt .
 
 # Development workflow
-dev: fmt lint test build
+dev: fmt test build
 	@echo "✅ Development workflow completed"
+
+# Run directly (debug build)
+run:
+	zig build run
+
+# Safe local exercise, no system changes
+dry-run:
+	zig build run -- --dry-run
 
 # Uninstall binary
 uninstall:
@@ -51,15 +55,16 @@ help:
 	@echo "================================"
 	@echo ""
 	@echo "Core Commands:"
-	@echo "  build     Build release binary"
+	@echo "  build     Build release binary (ReleaseSmall)"
 	@echo "  install   Build and install to ~/.local/bin"
-	@echo "  test      Run tests"
+	@echo "  test      Run unit tests"
 	@echo "  clean     Clean build artifacts"
+	@echo "  run       Run debug build directly"
+	@echo "  dry-run   Safe local exercise, no system changes"
 	@echo ""
 	@echo "Code Quality:"
-	@echo "  fmt       Format code"
-	@echo "  lint      Run clippy lints"
-	@echo "  dev       Full development workflow (fmt, lint, test, build)"
+	@echo "  fmt       Format code (zig fmt)"
+	@echo "  dev       Full development workflow (fmt, test, build)"
 	@echo ""
 	@echo "Other:"
 	@echo "  uninstall Remove brewup from ~/.local/bin"

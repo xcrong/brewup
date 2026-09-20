@@ -13,17 +13,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Rust
-        uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Setup Zig
+        uses: mlugg/setup-zig@v2
         with:
-          toolchain: stable
+          version: 0.16.0
+
+      - name: Run tests
+        run: zig build test
 
       - name: Build release binary
-        run: cargo build --release
+        run: zig build -Doptimize=ReleaseSmall -Dtarget=x86_64-macos
 
       - name: Create release archive
         run: |
-          cp target/release/brewup .
+          cp zig-out/bin/brewup .
           tar -czf brewup-x86_64-apple-darwin.tar.gz brewup
 
       - name: Upload artifact
@@ -39,18 +42,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Rust
-        uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Setup Zig
+        uses: mlugg/setup-zig@v2
         with:
-          toolchain: stable
-          target: aarch64-apple-darwin
+          version: 0.16.0
+
+      - name: Run tests
+        run: zig build test
 
       - name: Build release binary
-        run: cargo build --release --target aarch64-apple-darwin
+        run: zig build -Doptimize=ReleaseSmall -Dtarget=aarch64-macos
 
       - name: Create release archive
         run: |
-          cp target/aarch64-apple-darwin/release/brewup .
+          cp zig-out/bin/brewup .
           tar -czf brewup-aarch64-apple-darwin.tar.gz brewup
 
       - name: Upload artifact
@@ -66,18 +71,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Rust
-        uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Setup Zig
+        uses: mlugg/setup-zig@v2
         with:
-          toolchain: stable
-          target: x86_64-unknown-linux-gnu
+          version: 0.16.0
+
+      - name: Run tests
+        run: zig build test
 
       - name: Build release binary
-        run: cargo build --release --target x86_64-unknown-linux-gnu
+        run: zig build -Doptimize=ReleaseSmall -Dtarget=x86_64-linux
 
       - name: Create release archive
         run: |
-          cp target/x86_64-unknown-linux-gnu/release/brewup .
+          cp zig-out/bin/brewup .
           tar -czf brewup-x86_64-unknown-linux-gnu.tar.gz brewup
 
       - name: Upload artifact

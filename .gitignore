@@ -1,6 +1,6 @@
-# Rust build artifacts
-/target
-Cargo.lock
+# Zig build artifacts
+/zig-out
+/.zig-cache
 
 # IDE files
 .vscode/
