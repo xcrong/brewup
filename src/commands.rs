@@ -133,7 +133,7 @@ fn update_homebrew(args: &CliArgs, _config: &Config) -> Result<(), Box<dyn std::
 /// `Ok(())` on success, exits with error code on failure
 fn upgrade_packages(
     args: &CliArgs,
-    _config: &Config,
+    config: &Config,
     stats: &mut ChangeStats,
 ) -> Result<(), Box<dyn std::error::Error>> {
     utils::show_info(
@@ -143,7 +143,7 @@ fn upgrade_packages(
     );
 
     if !args.dry_run {
-        match utils::run_brew_command(&["upgrade"], args.verbose) {
+        match utils::run_brew_command(config.upgrade_args(), args.verbose) {
             Ok(output) => {
                 // Count upgraded packages - each upgraded package line starts with "==> Upgrading"
                 stats.upgraded_packages = output
@@ -157,7 +157,10 @@ fn upgrade_packages(
             }
         }
     } else {
-        println!("{}", "   Would run: brew upgrade".dimmed());
+        println!(
+            "{}",
+            format!("   Would run: brew {}", config.upgrade_args().join(" ")).dimmed()
+        );
         Ok(())
     }
 }

@@ -8,6 +8,8 @@
 pub struct Config {
     /// Application name
     pub app_name: &'static str,
+    /// Default upgrade command arguments
+    pub upgrade_args: Vec<&'static str>,
     /// Default cleanup command arguments
     pub cleanup_args: Vec<&'static str>,
     /// Maximum number of packages to display in summary
@@ -18,6 +20,7 @@ impl Default for Config {
     fn default() -> Self {
         Self {
             app_name: "BrewUp",
+            upgrade_args: vec!["upgrade", "-y"],
             cleanup_args: vec!["cleanup", "--prune=all"],
             max_packages_display: 10,
         }
@@ -31,6 +34,14 @@ impl Config {
     /// A new `Config` instance with default settings.
     pub fn new() -> Self {
         Self::default()
+    }
+
+    /// Returns the upgrade command arguments.
+    ///
+    /// # Returns
+    /// A slice of string references representing the upgrade command arguments.
+    pub fn upgrade_args(&self) -> &[&str] {
+        &self.upgrade_args
     }
 
     /// Returns the cleanup command arguments.

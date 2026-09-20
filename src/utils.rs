@@ -4,8 +4,9 @@
 //! Homebrew availability checking, and other common operations.
 
 use colored::*;
+use std::io::{BufRead, BufReader};
 use std::process;
-use std::process::{Command, Output};
+use std::process::{Command, Stdio};
 
 use crate::config::constants;
 
@@ -26,6 +27,9 @@ pub fn is_brew_available() -> bool {
 
 /// Executes a Homebrew command with the specified arguments.
 ///
+/// Stdout/stderr are streamed line-by-line in real time while also being
+/// collected for the return value (used for stats parsing).
+///
 /// # Arguments
 /// * `args` - Slice of string arguments to pass to the brew command
 /// * `verbose` - Whether to show verbose output
@@ -41,33 +45,69 @@ pub fn run_brew_command(args: &[&str], verbose: bool) -> Result<String, String> 
         );
     }
 
-    let mut command = Command::new("brew");
-    command.args(args);
-
-    let output = command
-        .output()
+    let mut child = Command::new("brew")
+        .args(args)
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
         .map_err(|e| format!("Failed to execute command: {}", e))?;
 
-    if output.status.success() {
-        handle_command_success(&output, verbose)
+    let stdout = child.stdout.take();
+    let stderr = child.stderr.take();
+
+    // Stream stdout in a separate thread to avoid blocking / deadlock,
+    // print each line immediately and collect it for the caller.
+    let stdout_handle = std::thread::spawn(move || {
+        let mut collected = String::new();
+        if let Some(out) = stdout {
+            for line in BufReader::new(out).lines().map_while(Result::ok) {
+                println!("{line}");
+                collected.push_str(&line);
+                collected.push('\n');
+            }
+        }
+        collected
+    });
+
+    // Stream stderr in real time as well (brew writes progress there too).
+    let stderr_handle = std::thread::spawn(move || {
+        let mut collected = String::new();
+        if let Some(err) = stderr {
+            for line in BufReader::new(err).lines().map_while(Result::ok) {
+                eprintln!("{line}");
+                collected.push_str(&line);
+                collected.push('\n');
+            }
+        }
+        collected
+    });
+
+    let status = child
+        .wait()
+        .map_err(|e| format!("Failed to wait for command: {}", e))?;
+
+    let stdout_content = stdout_handle.join().unwrap_or_default();
+    let stderr_content = stderr_handle.join().unwrap_or_default();
+
+    if status.success() {
+        handle_command_success(stdout_content)
     } else {
-        handle_command_failure(&output)
+        handle_command_failure(stderr_content)
     }
 }
 
 /// Handles successful command execution output.
 ///
+/// Output has already been streamed line-by-line, so this only handles
+/// the empty-output case and passes the collected stdout through.
+///
 /// # Arguments
-/// * `output` - The command output
-/// * `verbose` - Whether to show verbose output
+/// * `stdout` - The collected command stdout
 ///
 /// # Returns
 /// `Ok(String)` with command output
-fn handle_command_success(output: &Output, _verbose: bool) -> Result<String, String> {
-    let stdout = String::from_utf8_lossy(&output.stdout).to_string();
-    if !stdout.trim().is_empty() {
-        println!("{}", stdout);
-    } else {
+fn handle_command_success(stdout: String) -> Result<String, String> {
+    if stdout.trim().is_empty() {
         // Show a simple progress indicator for silent operations
         println!("{}", "   ✓ Done".green());
     }
@@ -76,14 +116,16 @@ fn handle_command_success(output: &Output, _verbose: bool) -> Result<String, Str
 
 /// Handles failed command execution.
 ///
+/// Stderr has already been streamed in real time, so this just
+/// forwards the collected stderr as the error.
+///
 /// # Arguments
-/// * `output` - The command output containing error information
+/// * `stderr` - The collected command stderr
 ///
 /// # Returns
 /// `Err(String)` with the formatted error message
-fn handle_command_failure(output: &Output) -> Result<String, String> {
-    let stderr = String::from_utf8_lossy(&output.stderr);
-    Err(stderr.to_string())
+fn handle_command_failure(stderr: String) -> Result<String, String> {
+    Err(stderr)
 }
 
 /// Displays a formatted error message and exits the application.
