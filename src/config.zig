@@ -4,7 +4,7 @@
 //! display limits, and emoji constants. Mirrors the Rust `config` module.
 
 /// Application version. Keep in sync with the VERSION file.
-pub const version: []const u8 = "0.2.1";
+pub const version: []const u8 = "0.3.0";
 
 /// Application name used in the header.
 pub const app_name: []const u8 = "BrewUp";
