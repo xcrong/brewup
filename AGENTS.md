@@ -14,7 +14,7 @@ Zero third-party dependencies; requires Zig 0.16.0+.
 ```sh
 make build     # zig build -Doptimize=ReleaseSmall
 make dev       # fmt + test + build
-make test      # zig build test (14 unit tests)
+make test      # zig build test (18 unit tests)
 make fmt       # zig fmt .
 make install   # build + copy to ~/.local/bin
 make uninstall # remove from ~/.local/bin
@@ -54,7 +54,7 @@ src/
 - `zig test` on an exe root with `Init`-style `main` collects 0 tests from other files (verified). Hence `src/tests.zig` aggregates all modules and `build.zig`'s `test` step targets it. Keep it in sync when adding modules.
 - Tests run under `zig build test` with stdout wired to the runner IPC: never write child/process output to stdout in tests. `utils` spawn tests use a `Ctx` with `out`/`err` pointed at `/dev/null` for this reason; keep that pattern.
 - Always use streaming file writers (`File.Writer.initStreaming`, `writeStreamingAll`) for stdout/stderr. Positional writers (`init`) silently overwrite offset 0 on redirect to a regular file.
-- `runBrewCommand` streams child stdio live via one pump thread per pipe while collecting bytes; `captureBrewCommand` (via `std.process.run`) collects silently for `brew list --versions`.
+- `runBrewCommand` streams child output live. A terminal stdout gets a pseudo-terminal so Homebrew draws in-place progress; a redirected stdout stays on pipes. The pump forwards each short read (a filled `readSliceShort` holds output until 8KB or EOF). Collected bytes are flattened — carriage-return overwrites and terminal controls removed — before stats parsing. `captureBrewCommand` (via `std.process.run`) collects silently for `brew list --versions`.
 - Color detection: `Terminal.Mode.detect` with `NO_COLOR`/`CLICOLOR_FORCE` from `init.environ_map`.
 
 ## Testing
